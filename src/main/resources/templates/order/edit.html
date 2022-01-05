@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layout/main}"
+        lang="zh">
+<body th:replace="::body (current = '订单管理')">
+<div
+        layout:fragment="content">
+    <div id="app" class="container grid px-6 mx-auto">
+        <h2
+                class="mt-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+        >
+            编辑订单
+        </h2>
+        <div class="mb-6 mt-2 text-sm text-gray-600">订单 ID：<span th:text="${order.id}">订单 ID</span></div>
+
+        <form @submit.prevent="" ref="form" method="post">
+            <div
+                    class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800"
+            >
+                <label class="block mt-4 text-sm">
+                    <span class="text-gray-700 dark:text-gray-400">
+                      所属用户
+                    </span>
+                    <select
+                            th:value="${order.userId}"
+                            name="userId"
+                            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                    >
+                        <option th:each="user : ${userList}" th:value="${user.id}"
+                                th:text="${user.name + '：' + user.id}">用户姓名： ID
+                        </option>
+                    </select>
+                </label>
+
+                <label class="block text-sm mt-4">
+                    <span class="text-gray-700 dark:text-gray-400">商品信息</span>
+                    <div class="mt-2">
+                        <div v-if="selectedGoods.length === 0" class="text-sm text-gray-600">没有选择任何商品~</div>
+                        <div v-for="good in selectedGoods">
+                            <span>商品名称：{{ good.name }}</span><span class="ml-6">数量：<input v-model="good.quantity" type="number" /><a
+                                @click="remove(good.id)"
+                                href="javascript:;">删除</a></span>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <button
+                                @click="addSelectedGood"
+                                class="px-3 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                            添加商品
+                        </button>
+                        <label for="goodSelect" class="ml-6">
+                            选择商品：
+                        </label>
+                        <select
+                                v-model="selectedGood"
+                                @blur.prevent=""
+                                id="goodSelect"
+                                class="text-sm py-1 dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                        >
+                            <option v-for="good in unSelectedGoods" :value="good">{{ good.name }}，价格：{{ good.price }}</option>
+                        </select>
+
+                    </div>
+                </label>
+
+                <label class="block text-sm mt-4">
+                    <span class="text-gray-700 dark:text-gray-400">订单备注</span>
+                    <input
+                            th:value="${order.remark}"
+                            name="remark"
+                            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                    />
+                </label>
+
+
+                <div class="mt-4">
+
+                    <button
+                            @click="submit"
+                            class="px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                    >
+                        保存
+                    </button>
+                    <button
+                            type="button"
+                            class="ml-4 px-4 py-2 text-sm font-medium leading-5 text-purple-600 border-purple-600 transition-colors duration-150 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                    >
+
+                        <a href="/order">
+                            返回
+                        </a>
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script th:inline="javascript">
+        const app = {
+            data() {
+                return {
+                    goods: [],
+                    selectedGood: null,
+                    selectedGoods: [],
+                    unSelectedGoods: []
+                }
+            },
+            watch: {
+                goods() {
+                    this.updateUnSelectedGoods()
+                },
+                selectedGoods() {
+                    this.updateUnSelectedGoods()
+                }
+            },
+            methods: {
+                addSelectedGood() {
+                    if (this.selectedGood) {
+                        this.selectedGoods = [{
+                            ...this.selectedGood,
+                            quantity: 1
+                        }, ...this.selectedGoods]
+                        this.selectedGood = null
+                    }
+                },
+                remove(id) {
+                    this.selectedGoods = this.selectedGoods.filter(good => good.id !== id)
+                },
+                updateUnSelectedGoods() {
+                    this.unSelectedGoods = this.goods.filter(g => this.selectedGoods.every(sg => sg.id !== g.id))
+                },
+                submit() {
+                    const form = this.$refs.form
+                    const data = {
+                        createdAt: Math.floor(Date.now() / 1000),
+                        goods: JSON.stringify(this.selectedGoods)
+                    }
+                    for (const [key, value] of Object.entries(data)) {
+                        const hiddenField = document.createElement('input')
+                        hiddenField.type = 'hidden'
+                        hiddenField.name = key
+                        hiddenField.value = value
+                        form.appendChild(hiddenField)
+                    }
+                    form.submit()
+                }
+            },
+            mounted() {
+                this.goods = [[${goodList}]]
+                this.selectedGoods = [[${order.goods}]]
+            }
+        }
+
+        Vue.createApp(app).mount('#app')
+    </script>
+</div>
+</body>
+</html>

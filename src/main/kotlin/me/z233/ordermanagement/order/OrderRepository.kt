@@ -5,16 +5,19 @@ import org.apache.ibatis.annotations.*
 @Mapper
 interface OrderRepository {
 
-  @Insert("INSERT INTO order(userId, createdAt, remark) VALUES(#{userId}, #{createdAt}, #{remark})")
+  @Insert("INSERT INTO `order`(userId, createdAt, remark) VALUES(#{userId}, #{createdAt}, #{remark})")
+  @Options(useGeneratedKeys = true, keyProperty = "id")
   fun insert(order: Order): Int
 
-  @Delete("DELETE FROM order WHERE id = #{id}")
+  @Delete("DELETE FROM `order` WHERE id = #{id}")
   fun deleteById(id: Int): Int
 
-  @Update("UPDATE order SET userId = #{userId}, createdAt = #{createdAt}, remark = #{remark} WHERE id = #{id}")
+  @Update("UPDATE `order` SET userId = #{userId}, createdAt = #{createdAt}, remark = #{remark} WHERE id = #{id}")
   fun update(order: Order): Int
 
-  @Select("SELECT * FROM order")
+  @Select("SELECT * FROM `order`")
   fun findAll(): List<Order>
 
+  @Select("SELECT * FROM `order` WHERE id = #{id}")
+  fun findById(id: Int): Order?
 }

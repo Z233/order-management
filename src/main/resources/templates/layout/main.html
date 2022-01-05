@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      :class="{ 'theme-dark': dark }"
+      x-data="data()"
+      lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>订单管理系统</title>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+    />
+    <link th:href="@{/assets/css/tailwind.output.css}" rel="stylesheet"/>
+    <!--    <script src="https://cdn.tailwindcss.com"></script>-->
+    <script
+            src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
+            defer
+    ></script>
+    <script th:src="@{/assets/js/init-alpine.js}"></script>
+</head>
+<body>
+<div
+        class="flex h-screen bg-gray-50 dark:bg-gray-900"
+        :class="{ 'overflow-hidden': isSideMenuOpen}"
+        th:fragment="body(current)"
+>
+    <!-- Desktop sidebar -->
+    <aside
+            class="z-20 flex-shrink-0 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block"
+    >
+        <div class="py-4 text-gray-500 dark:text-gray-400">
+            <a
+                    class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
+                    href="#"
+            >
+                订单管理系统
+            </a>
+            <ul class="mt-6">
+                <li class="relative px-6 py-3">
+                  <span
+                      th:if="${current == '用户管理'}"
+                      class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                      aria-hidden="true"
+                  ></span>
+                    <a
+                        th:class="${current == '用户管理'} ?
+                        'font-semibold inline-flex items-center w-full text-sm text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100'
+                        : ' inline-flex items-center w-full text-sm text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100'"
+                        href="/user"
+                    >
+                        <svg t="1641221915752" class="w-5 h-5" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4228" stroke="currentColor"><path d="M620.8 611.2c67.2-38.4 115.2-112 115.2-195.2 0-124.8-99.2-224-224-224s-224 99.2-224 224c0 83.2 44.8 156.8 115.2 195.2-89.6 35.2-156.8 115.2-179.2 211.2-3.2 16 6.4 35.2 25.6 38.4H256c16 0 28.8-9.6 32-25.6 22.4-105.6 115.2-182.4 224-182.4s201.6 76.8 224 182.4c3.2 16 19.2 28.8 38.4 25.6 16-3.2 28.8-19.2 25.6-38.4-22.4-96-89.6-176-179.2-211.2zM352 416c0-89.6 70.4-160 160-160s160 70.4 160 160-70.4 160-160 160-160-70.4-160-160zM992 630.4c-12.8-64-54.4-115.2-118.4-144 35.2-32 54.4-76.8 54.4-128C928 265.6 857.6 192 768 192c-19.2 0-32 12.8-32 32s12.8 32 32 32c54.4 0 96 44.8 96 102.4 0 51.2-28.8 89.6-73.6 99.2-16 3.2-28.8 22.4-22.4 38.4 0 16 9.6 28.8 25.6 28.8 70.4 12.8 118.4 54.4 131.2 115.2 3.2 16 16 25.6 32 25.6h6.4c19.2 0 32-16 28.8-35.2zM252.8 499.2c6.4-19.2-6.4-35.2-22.4-41.6C188.8 448 160 409.6 160 358.4 163.2 300.8 201.6 256 256 256c19.2 0 32-12.8 32-32s-16-32-32-32c-89.6 0-156.8 70.4-156.8 166.4 0 51.2 19.2 96 51.2 128-60.8 28.8-105.6 80-118.4 144-3.2 16 6.4 35.2 25.6 38.4H64c16 0 28.8-9.6 32-25.6 12.8-60.8 60.8-102.4 131.2-115.2 16 0 25.6-12.8 25.6-28.8z" fill="#666666" p-id="4229"></path></svg>
+                        <span class="ml-4">用户管理</span>
+                    </a>
+                </li>
+                <li class="relative px-6 py-3">
+                  <span
+                          th:if="${current == '商品管理'}"
+                          class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                          aria-hidden="true"
+                  ></span>
+                    <a
+                            th:class="${current == '商品管理'} ?
+                        'font-semibold inline-flex items-center w-full text-sm text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100'
+                        : ' inline-flex items-center w-full text-sm text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100'"
+                            href="/good"
+                    >
+                        <svg t="1641221964213" class="w-5 h-5" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5022" color="currentColor"><path d="M934.4 288c0-16-16-28.8-32-28.8h-137.6c-25.6-108.8-124.8-188.8-240-188.8h-19.2c-115.2 0-214.4 80-240 188.8H128C108.8 256 96 268.8 96 288l-28.8 553.6v3.2C73.6 912 128 960 192 960h649.6c64 0 118.4-51.2 121.6-115.2v-3.2L934.4 288z m-96 608H192c-28.8 0-54.4-22.4-57.6-54.4L156.8 320h102.4v134.4c-19.2 9.6-32 32-32 54.4 0 35.2 28.8 64 64 64s64-28.8 64-64c0-22.4-12.8-44.8-32-54.4V313.6c0-102.4 83.2-182.4 182.4-182.4h19.2c102.4 0 182.4 83.2 182.4 182.4v144c-19.2 9.6-32 32-32 54.4 0 35.2 28.8 64 64 64s64-28.8 64-64c0-22.4-12.8-44.8-32-54.4V320h99.2l25.6 521.6c0 32-25.6 54.4-57.6 54.4z" fill="#666666" p-id="5023"></path><path d="M611.2 256h-192c-19.2 0-32 12.8-32 32s12.8 32 32 32h192c19.2 0 32-12.8 32-32s-12.8-32-32-32z" fill="#666666" p-id="5024"></path></svg>
+                        <span class="ml-4">商品管理</span>
+                    </a>
+                </li>
+                <li class="relative px-6 py-3">
+                  <span
+                          th:if="${current == '订单管理'}"
+                          class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                          aria-hidden="true"
+                  ></span>
+                    <a
+                            th:class="${current == '订单管理'} ?
+                        'font-semibold inline-flex items-center w-full text-sm text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100'
+                        : ' inline-flex items-center w-full text-sm text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100'"
+                            href="/order"
+                    >
+                        <svg t="1641222116001" class="w-5 h-5" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5991" stroke="currentColor"><path d="M601.5 113.9c9.5 0 18.5 3.8 25.4 10.6 6.8 6.8 10.6 15.9 10.6 25.4s-3.8 18.5-10.6 25.4c-6.8 6.8-15.9 10.6-25.4 10.6h-180c-9.5 0-18.5-3.8-25.4-10.6-6.8-6.8-10.6-15.9-10.6-25.4 0-9.5 3.8-18.5 10.6-25.4 6.8-6.8 15.9-10.6 25.4-10.6h180m0-48h-180c-46.2 0-84 37.8-84 84s37.8 84 84 84h180c46.2 0 84-37.8 84-84s-37.8-84-84-84z" p-id="5992"></path><path d="M761.6 959.5H261.3c-68.3 0-123.9-55.6-123.9-124v-580c0-68.4 55.6-124 123.9-124h2c13.3 0 24 10.7 24 24s-10.7 24-24 24h-2c-41.8 0-75.9 34.1-75.9 76v580c0 41.9 34 76 75.9 76h500.3c41.8 0 75.9-34.1 75.9-76v-580c0-41.9-34-76-75.9-76h-1.9c-13.3 0-24-10.7-24-24s10.7-24 24-24h1.9c68.3 0 123.9 55.6 123.9 124v580c0 68.4-55.6 124-123.9 124z" p-id="5993"></path><path d="M511 438.8H278.6c-13.1 0-23.8-10.7-23.8-23.8v-0.3c0-13.1 10.7-23.8 23.8-23.8H511c13.1 0 23.8 10.7 23.8 23.8v0.3c0 13.1-10.7 23.8-23.8 23.8zM651 605.3H278.6c-13.1 0-23.8-10.7-23.8-23.8v-0.3c0-13.1 10.7-23.8 23.8-23.8H651c13.1 0 23.8 10.7 23.8 23.8v0.3c0 13.1-10.7 23.8-23.8 23.8zM651 771.8H278.6c-13.1 0-23.8-10.7-23.8-23.8v-0.3c0-13.1 10.7-23.8 23.8-23.8H651c13.1 0 23.8 10.7 23.8 23.8v0.3c0 13.1-10.7 23.8-23.8 23.8z" p-id="5994"></path></svg>
+                        <span class="ml-4">订单管理</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+    <!-- Mobile sidebar -->
+    <!-- Backdrop -->
+    <div
+            x-show="isSideMenuOpen"
+            x-transition:enter="transition ease-in-out duration-150"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in-out duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-10 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center"
+    ></div>
+    <aside
+            class="fixed inset-y-0 z-20 flex-shrink-0 w-64 mt-16 overflow-y-auto bg-white dark:bg-gray-800 md:hidden"
+            x-show="isSideMenuOpen"
+            x-transition:enter="transition ease-in-out duration-150"
+            x-transition:enter-start="opacity-0 transform -translate-x-20"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in-out duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0 transform -translate-x-20"
+            @click.away="closeSideMenu"
+            @keydown.escape="closeSideMenu"
+    >
+        <div class="py-4 text-gray-500 dark:text-gray-400">
+            <a
+                    class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
+                    href="#"
+            >
+                订单管理系统
+            </a>
+            <ul class="mt-6">
+                <li class="relative px-6 py-3">
+              <span
+                      class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                      aria-hidden="true"
+              ></span>
+                    <a
+                            class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
+                            href="tables.html"
+                    >
+                        <svg
+                                class="w-5 h-5"
+                                aria-hidden="true"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                        >
+                            <path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                        </svg>
+                        <span class="ml-4">商品管理</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+    <div class="flex flex-col flex-1 w-full">
+        <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
+            <div
+                    class="container flex items-center justify-end h-full px-6 mx-auto text-purple-600 dark:text-purple-300"
+            >
+                <!-- Mobile hamburger -->
+                <button
+                        class="p-1 mr-5 -ml-1 rounded-md md:hidden focus:outline-none focus:shadow-outline-purple"
+                        @click="toggleSideMenu"
+                        aria-label="Menu"
+                >
+                    <svg
+                            class="w-6 h-6"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                    >
+                        <path
+                                fill-rule="evenodd"
+                                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                                clip-rule="evenodd"
+                        ></path>
+                    </svg>
+                </button>
+                <ul class="flex items-center flex-shrink-0 space-x-6">
+                    <!-- Theme toggler -->
+                    <li class="flex">
+                        <button
+                                class="rounded-md focus:outline-none focus:shadow-outline-purple"
+                                @click="toggleTheme"
+                                aria-label="Toggle color mode"
+                        >
+                            <template x-if="!dark">
+                                <svg
+                                        class="w-5 h-5"
+                                        aria-hidden="true"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                >
+                                    <path
+                                            d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
+                                    ></path>
+                                </svg>
+                            </template>
+                            <template x-if="dark">
+                                <svg
+                                        class="w-5 h-5"
+                                        aria-hidden="true"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                >
+                                    <path
+                                            fill-rule="evenodd"
+                                            d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                                            clip-rule="evenodd"
+                                    ></path>
+                                </svg>
+                            </template>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <main layout:fragment="content" class="h-full pb-16 overflow-y-auto">
+            MAIN CONTENT
+        </main>
+    </div>
+</div>
+</body>
+</html>

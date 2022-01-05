@@ -1,49 +1,69 @@
 package me.z233.ordermanagement.user
 
 import org.springframework.http.ResponseEntity
+import org.springframework.lang.NonNull
+import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 
-@RestController()
+@Controller
 @RequestMapping("/user")
 class UserController(val userRepository: UserRepository) {
 
   @GetMapping()
-  fun getAllUser(): List<User> {
-    return userRepository.findAll()
+  fun getAllUser(model: Model): String {
+    val userList = userRepository.findAll()
+    model.addAttribute("userList", userList)
+    return "/user/index"
   }
 
-  @PostMapping()
-  fun createUser(
-    @RequestBody newUser: User
-  ): User {
+  @GetMapping("/search")
+  fun searchByName(@RequestParam  nameKey: String?, @RequestParam phoneKey: String?, @RequestParam sex: String?, model: Model): String {
+    val name = nameKey ?: ""
+    val phone = phoneKey ?: ""
+    val sexKey = sex ?: ""
+    val userList = userRepository.search(name, phone, sexKey)
+    model.addAttribute("userList", userList)
+    model.addAttribute("isSearch", true)
+    return "/user/index"
+  }
+
+  @GetMapping("/add")
+  fun createUserView() = "/user/add"
+
+  @PostMapping("/add")
+  fun createUser(@NonNull newUser: User): String {
     val newId = userRepository.insert(newUser)
     newUser.id = newId
-    return newUser
+    return "user/success"
   }
 
-  @PutMapping()
-  fun updateUser(@RequestBody user: User): ResponseEntity<Any> {
-    if (user.id == null) {
-      return ResponseEntity.badRequest().body("User id cannot be null")
+  @GetMapping("/edit/{id}")
+  fun editUser(model: Model, @PathVariable @NonNull id: Int): String {
+    val user = userRepository.findById(id)
+    user.let {
+      model.addAttribute("user", user)
+      return "/user/edit"
     }
+  }
+
+  @PostMapping("/edit/{id}")
+  fun updateUser(@NonNull user: User, @PathVariable @NonNull id: Int): String {
+    user.id = id
     val res = userRepository.update(user)
     if (res == 1) {
-      return ResponseEntity.ok().build()
-    } else {
-      return ResponseEntity.internalServerError().build()
+      return "/user/success"
     }
+    return "/user/fail"
   }
 
-  @DeleteMapping()
-  fun deleteUser(@RequestBody user: User): ResponseEntity<Any> {
-    if (user.id == null) {
-      return ResponseEntity.badRequest().body("User id cannot be null")
-    }
-    val res = userRepository.deleteById(user.id!!)
+  @PostMapping("/delete/{id}")
+  fun deleteUser(@PathVariable @NonNull id: Int): String {
+    val res = userRepository.deleteById(id)
     if (res == 1) {
-      return ResponseEntity.ok().build()
+      return "/user/success"
     } else {
-      return ResponseEntity.internalServerError().build()
+      return "/user/fail"
     }
   }
 
